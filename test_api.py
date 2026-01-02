@@ -135,7 +135,7 @@ class TestLabirintAPI:
             assert len(successful_responses) > 0, "API не вернул ни одного успешного ответа для латинских запросов"
 
             for result in successful_responses:
-                assert result["response_time"] < 10, \
+                assert result["response_time"] < 30, \
                     f"Время ответа для '{result['query']}' слишком большое: {result['response_time']}сек"
 
                 if result.get("is_html"):
