@@ -2,7 +2,6 @@ import pytest
 import allure
 import json
 from api_client import APIClient
-from config import settings
 
 
 @pytest.mark.api
