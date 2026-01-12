@@ -16,29 +16,29 @@
 
 ├── pages/          
 
-│   ├── base_page.py
+│      ├── base_page.py
 
-│   ├── main_page.py
+│      ├── main_page.py
 
-│   └── book_page.py
+│      └── book_page.py
 
 ├── tests/         
 
-│   ├── test_ui.py
+│      ├── test_ui.py
 
-│   └── test_api.py
+│      └── test_api.py
 
 ├── api/           
 
-│   └── api_client.py
+│      └── api_client.py
 
 ├── config/         
 
-│   ├── config.py
+│      ├── config.py
 
-│   ├── settings.py
+│      ├── settings.py
 
-│   └── test_data.py
+│      └── test_data.py
 
 ├── requirements.txt
 
@@ -78,4 +78,5 @@ pytest -v --log-cli-level=INFO
 # С перезапуском упавших тестов
 
 pytest --reruns 2 --reruns-delay 1
+
 
