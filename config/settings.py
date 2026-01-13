@@ -1,46 +1,40 @@
 import os
-from typing import Optional
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
 class Settings:
-    """Конфигурационные настройки проекта."""
+    """Класс настроек приложения"""
 
-    BASE_URL: str = os.getenv("BASE_URL", "https://www.labirint.ru")
-    API_BASE_URL: str = os.getenv("API_BASE_URL", "https://www.labirint.ru/ajax")
+    BASE_URL = "https://www.labirint.ru"
+    API_BASE_URL = "https://www.labirint.ru"  
 
-    BROWSER: str = os.getenv("BROWSER", "chrome").lower()
-    HEADLESS: bool = os.getenv("HEADLESS", "false").lower() == "true"
-    IMPLICIT_WAIT: int = int(os.getenv("IMPLICIT_WAIT", "10"))
-    PAGE_LOAD_TIMEOUT: int = int(os.getenv("PAGE_LOAD_TIMEOUT", "30"))
-    WINDOW_WIDTH: int = int(os.getenv("WINDOW_WIDTH", "1920"))
-    WINDOW_HEIGHT: int = int(os.getenv("WINDOW_HEIGHT", "1080"))
+    API_TIMEOUT = int(os.getenv("API_TIMEOUT", "30"))
+    API_RETRY_COUNT = int(os.getenv("API_RETRY_COUNT", "3"))
 
-    API_TIMEOUT: int = int(os.getenv("API_TIMEOUT", "30"))
-    API_MAX_RETRIES: int = int(os.getenv("API_MAX_RETRIES", "3"))
+    BROWSER = os.getenv("BROWSER", "chrome")
+    HEADLESS = os.getenv("HEADLESS", "False").lower() == "true"
+    WINDOW_WIDTH = int(os.getenv("WINDOW_WIDTH", "1920"))
+    WINDOW_HEIGHT = int(os.getenv("WINDOW_HEIGHT", "1080"))
+    IMPLICIT_WAIT = int(os.getenv("IMPLICIT_WAIT", "10"))
 
-    SCREENSHOTS_DIR: str = os.getenv("SCREENSHOTS_DIR", "screenshots")
-    LOGS_DIR: str = os.getenv("LOGS_DIR", "logs")
+    DOWNLOAD_DIR = os.path.join(os.getcwd(), "downloads")
+    SCREENSHOT_DIR = os.path.join(os.getcwd(), "screenshots")
+    LOGS_DIR = os.path.join(os.getcwd(), "logs")
 
-    SEARCH_QUERY_RUSSIAN: str = os.getenv("SEARCH_QUERY_RUSSIAN", "Властелин колец")
-    SEARCH_QUERY_ENGLISH: str = os.getenv("SEARCH_QUERY_ENGLISH", "Harry Potter")
-    SEARCH_QUERY_WITH_NUMBERS: str = os.getenv("SEARCH_QUERY_WITH_NUMBERS", "1984")
+    TEST_EMAIL = os.getenv("TEST_EMAIL", "")
+    TEST_PASSWORD = os.getenv("TEST_PASSWORD", "")
+    TEST_TOKEN = os.getenv("TEST_TOKEN", "")
 
-    VALID_EMAIL: Optional[str] = os.getenv("VALID_EMAIL")
-    VALID_PASSWORD: Optional[str] = os.getenv("VALID_PASSWORD")
-    API_KEY: Optional[str] = os.getenv("API_KEY")
-
-    @classmethod
-    def validate(cls) -> None:
-        """Валидация настроек."""
-        required_vars = ["BASE_URL"]
-        missing = [var for var in required_vars if not getattr(cls, var)]
-
-        if missing:
-            raise ValueError(f"Отсутствуют обязательные настройки: {', '.join(missing)}")
+    DEFAULT_HEADERS = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+    }
 
 
 settings = Settings()
-settings.validate()
