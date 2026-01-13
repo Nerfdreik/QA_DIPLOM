@@ -44,6 +44,8 @@
 
 ├── .env.example    
 
+├── conftest.py
+
 └── README.md
 
 
@@ -78,5 +80,6 @@ pytest -v --log-cli-level=INFO
 # С перезапуском упавших тестов
 
 pytest --reruns 2 --reruns-delay 1
+
 
 
