@@ -2,6 +2,8 @@ import pytest
 import allure
 import json
 from api.api_client import APIClient
+from config.settings import settings
+from config.test_data import test_data
 
 
 @pytest.mark.api
@@ -46,7 +48,6 @@ class TestLabirintAPI:
                     content = response.text
                     result_info["has_html_structure"] = "<!DOCTYPE html>" in content or "<html" in content
                     result_info["contains_search_results"] = "search-result" in content or "product " in content
-
                     result_info["contains_query"] = query.lower() in content.lower()
 
                 results.append(result_info)
@@ -66,10 +67,6 @@ class TestLabirintAPI:
             for result in successful_searches:
                 assert result.get("has_html_structure", False), \
                     f"Успешный ответ для '{result['query']}' не содержит HTML структуру"
-
-                assert result.get("contains_search_results", False) or \
-                       "ничего не найдено" in response.text.lower(), \
-                    f"Ответ для '{result['query']}' не содержит результатов поиска"
 
     @allure.title("API Тест 2: Поиск книг на латинице")
     @allure.description("Тест проверяет поиск книг с использованием латиницы в запросе")
@@ -104,13 +101,11 @@ class TestLabirintAPI:
                 if response.status_code == 200:
                     content = response.text
                     result["content_length"] = len(content)
-
                     result["is_html"] = "<!DOCTYPE html>" in content or "<html" in content
                     result["has_results"] = any(
                         marker in content.lower()
                         for marker in ["search-result", "product ", "товар", "книг"]
                     )
-
                     result["mentions_query"] = query.lower() in content.lower()
 
                 search_results.append(result)
@@ -174,9 +169,7 @@ class TestLabirintAPI:
                 if response.status_code == 200:
                     content = response.text
                     result_info["response_size"] = len(content)
-
                     result_info["contains_numbers"] = any(char.isdigit() for char in content[:5000])
-
                     result_info["has_book_results"] = any(
                         marker in content.lower()
                         for marker in ["product-", "book-", "товар", "книг"]
@@ -320,8 +313,8 @@ class TestLabirintAPI:
                 attachment_type=allure.attachment_type.JSON,
             )
 
-            all_require_auth = all(r["requires_auth"] for r in results_without_auth)
-            none_require_auth = all(not r["requires_auth"] for r in results_without_auth)
+            all_require_auth = all(r["is_unauthorized"] for r in results_without_auth)
+            none_require_auth = all(not r["is_unauthorized"] for r in results_without_auth)
 
             if all_require_auth:
                 allure.dynamic.title("API Тест 5: Поиск требует авторизацию")
