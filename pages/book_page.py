@@ -1,23 +1,28 @@
-from typing import Tuple
+from typing import Dict, Any, Tuple
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
-from base_page import BasePage
+from pages.base_page import BasePage
+from config.test_data import test_data
 import allure
-from config import test_data
 
 
 class BookPage(BasePage):
     """Page Object для страницы книги."""
 
-    BOOK_TITLE: Tuple[By, str] = (By.CSS_SELECTOR, "#title-wrapper .mr-2")
-    BOOK_AUTHOR: Tuple[By, str] = (By.CSS_SELECTOR, "#author-wrapper .mr-2")
-    BOOK_PUBLISHER: Tuple[By, str] = (By.CSS_SELECTOR, "#publisher-wrapper .mr-2")
-    BOOK_ISBN: Tuple[By, str] = (By.CSS_SELECTOR, "#isbn-wrapper .mr-2")
-    BOOK_PAGES: Tuple[By, str] = (By.CSS_SELECTOR, "#pages-wrapper .mr-2")
-    BOOK_DESCRIPTION: Tuple[By, str] = (By.CSS_SELECTOR, "#description-wrapper .mr-2")
-    BOOK_WEBSITE: Tuple[By, str] = (By.CSS_SELECTOR, "#website-wrapper .mr-2")
-    ADD_TO_CART_BUTTON: Tuple[By, str] = (By.CSS_SELECTOR, test_data.LOCATORS["add_to_cart_button"])
-    BACK_TO_BOOKSTORE_BUTTON: Tuple[By, str] = (By.CSS_SELECTOR, "button:text('Back To Book Store')")
+    BOOK_TITLE: Tuple[By, str] = (By.XPATH, test_data.LOCATORS["book_title"])
+    BOOK_AUTHOR: Tuple[By, str] = (By.XPATH, test_data.LOCATORS["book_author"])
+    BOOK_PRICE: Tuple[By, str] = (By.XPATH, test_data.LOCATORS["book_price"])
+    BOOK_OLD_PRICE: Tuple[By, str] = (By.XPATH, test_data.LOCATORS["book_old_price"])
+    BOOK_DESCRIPTION: Tuple[By, str] = (By.XPATH, test_data.LOCATORS["book_description"])
+    BOOK_COVER: Tuple[By, str] = (By.XPATH, test_data.LOCATORS["book_cover"])
+
+    ADD_TO_CART_BUTTON: Tuple[By, str] = (By.XPATH, test_data.LOCATORS["add_to_cart_button"])
+    ADD_TO_WISHLIST_BUTTON: Tuple[By, str] = (By.XPATH, test_data.LOCATORS["add_to_wishlist_button"])
+    READ_FRAGMENT_BUTTON: Tuple[By, str] = (By.XPATH, test_data.LOCATORS["read_fragment_button"])
+
+    BOOK_RATING: Tuple[By, str] = (By.XPATH, test_data.LOCATORS["book_rating"])
+    BOOK_REVIEWS: Tuple[By, str] = (By.XPATH, test_data.LOCATORS["book_reviews"])
+    BOOK_SERIES: Tuple[By, str] = (By.XPATH, test_data.LOCATORS["book_series"])
 
     def __init__(self, driver: WebDriver) -> None:
         """
@@ -29,90 +34,127 @@ class BookPage(BasePage):
         super().__init__(driver)
 
     @allure.step("Получить информацию о книге")
-    def get_book_info(self) -> dict:
+    def get_book_info(self) -> Dict[str, Any]:
         """
-        Получает полную информацию о книге.
+        Возвращает информацию о книге.
 
         Returns:
-            dict: Словарь с информацией о книге
+            Dict[str, Any]: Словарь с информацией о книге
         """
-        return {
-            "title": self.get_text(self.BOOK_TITLE),
-            "author": self.get_text(self.BOOK_AUTHOR),
-            "publisher": self.get_text(self.BOOK_PUBLISHER),
-            "isbn": self.get_text(self.BOOK_ISBN),
-            "pages": self.get_text(self.BOOK_PAGES),
-            "description": self.get_text(self.BOOK_DESCRIPTION),
-            "website": self.get_text(self.BOOK_WEBSITE),
-        }
+        info = {}
 
-    @allure.step("Получить название книги")
-    def get_book_title(self) -> str:
+        try:
+            info["title"] = self.get_element_text(self.BOOK_TITLE)
+        except:
+            info["title"] = "Не найдено"
+
+        try:
+            info["author"] = self.get_element_text(self.BOOK_AUTHOR)
+        except:
+            info["author"] = "Не найдено"
+
+        try:
+            info["price"] = self.get_element_text(self.BOOK_PRICE)
+        except:
+            info["price"] = "Не найдено"
+
+        try:
+            info["old_price"] = self.get_element_text(self.BOOK_OLD_PRICE)
+        except:
+            info["old_price"] = "Не найдено"
+
+        try:
+            info["description"] = self.get_element_text(self.BOOK_DESCRIPTION)
+        except:
+            info["description"] = "Не найдено"
+
+        return info
+
+    @allure.step("Проверить наличие кнопки 'Добавить в корзину'")
+    def is_add_to_cart_button_present(self) -> bool:
         """
-        Получает название книги.
+        Проверяет наличие кнопки добавления в корзину.
 
         Returns:
-            str: Название книги
+            bool: True если кнопка присутствует
         """
-        return self.get_text(self.BOOK_TITLE)
+        return self.is_element_visible(self.ADD_TO_CART_BUTTON, timeout=3)
 
-    @allure.step("Получить автора книги")
-    def get_book_author(self) -> str:
+    @allure.step("Нажать кнопку 'Добавить в корзину'")
+    def click_add_to_cart(self) -> None:
         """
-        Получает автора книги.
-
-        Returns:
-            str: Автор книги
-        """
-        return self.get_text(self.BOOK_AUTHOR)
-
-    @allure.step("Получить ISBN книги")
-    def get_book_isbn(self) -> str:
-        """
-        Получает ISBN книги.
-
-        Returns:
-            str: ISBN книги
-        """
-        return self.get_text(self.BOOK_ISBN)
-
-    @allure.step("Добавить книгу в корзину")
-    def add_to_cart(self) -> None:
-        """
-        Добавляет книгу в корзину.
+        Нажимает кнопку добавления в корзину.
         """
         self.click(self.ADD_TO_CART_BUTTON)
 
-    @allure.step("Проверить, что кнопка 'Добавить в корзину' активна")
-    def is_add_to_cart_button_enabled(self) -> bool:
+    @allure.step("Добавить книгу в корзину")
+    def add_book_to_cart(self) -> bool:
         """
-        Проверяет, что кнопка добавления в корзину активна.
+        Добавляет книгу в корзину.
 
         Returns:
-            bool: True если кнопка активна
+            bool: True если книга успешно добавлена
         """
-        return self.wait_for_clickable(self.ADD_TO_CART_BUTTON).is_enabled()
+        if self.is_add_to_cart_button_present():
+            self.click_add_to_cart()
+            return True
+        return False
 
-    @allure.step("Вернуться в книжный магазин")
-    def back_to_bookstore(self) -> None:
+    @allure.step("Проверить отображение цены")
+    def is_price_displayed(self) -> bool:
         """
-        Возвращается в книжный магазин.
-        """
-        self.click(self.BACK_TO_BOOKSTORE_BUTTON)
+        Проверяет отображение цены книги.
 
-    @allure.step("Проверить полную информацию о книге")
+        Returns:
+            bool: True если цена отображается
+        """
+        return self.is_element_visible(self.BOOK_PRICE)
+
+    @allure.step("Получить цену книги")
+    def get_book_price(self) -> str:
+        """
+        Возвращает цену книги.
+
+        Returns:
+            str: Цена книги
+        """
+        try:
+            return self.get_element_text(self.BOOK_PRICE)
+        except:
+            return "Не найдено"
+
+    @allure.step("Проверить, что вся информация о книге отображается")
     def verify_book_information_complete(self) -> bool:
         """
-        Проверяет, что вся информация о книге присутствует.
+        Проверяет, что вся основная информация о книге отображается.
 
         Returns:
-            bool: True если вся информация присутствует
+            bool: True если вся информация отображается
         """
         info = self.get_book_info()
-        required_fields = ["title", "author", "isbn", "description"]
 
-        for field in required_fields:
-            if not info.get(field):
-                return False
+        return all([
+            info["title"] != "Не найдено",
+            info["author"] != "Не найдено",
+            info["price"] != "Не найдено"
+        ])
 
-        return True
+    @allure.step("Проверить наличие обложки книги")
+    def is_book_cover_displayed(self) -> bool:
+        """
+        Проверяет наличие обложки книги.
+
+        Returns:
+            bool: True если обложка отображается
+        """
+        return self.is_element_visible(self.BOOK_COVER)
+
+    @allure.step("Проверить наличие описания книги")
+    def is_description_displayed(self) -> bool:
+        """
+        Проверяет наличие описания книги.
+
+        Returns:
+            bool: True если описание отображается
+        """
+        return self.is_element_visible(self.BOOK_DESCRIPTION)
