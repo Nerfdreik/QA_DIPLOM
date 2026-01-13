@@ -1,3 +1,8 @@
+selenium==4.21.0
+requests==2.32.3
 pytest==8.4.1
-sqlalchemy==2.0.40
-psycopg2-binary==2.9.10
+allure-pytest==2.13.2
+webdriver-manager==4.0.2
+python-dotenv==1.0.1
+pytest-html==4.1.1
+pytest-rerunfailures==14.0
